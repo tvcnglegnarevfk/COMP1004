@@ -85,8 +85,11 @@ function genreHandler(){
 			console.log(resultGenres);
 			out += "<br>Genres: " + resultGenres[0];
 			for (i=1; i<resultGenres.length; i++){
-				out += ", " + resultGenres[i]; 
+				out += ", " + resultGenres[i];
 			}
+
+			out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
+
 			document.getElementById("pResult").innerHTML = out;
 		}
 }
