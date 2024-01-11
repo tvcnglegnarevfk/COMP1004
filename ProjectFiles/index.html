@@ -2,8 +2,28 @@
 <html>
 	<head>
 		<title>Movie Suggestion Generator</title>
+		<link rel="stylesheet" href="./styles/style.css">
 	</head>
 	<body>
+		<div id="content">
+			<div id="divGenres">
+				<h1 id="title">Movie Suggestion Generator</h1>
+				<p id="pGenres">
+					List of available genres fetched from tmdb api:
+					<ul id="ulGenres"></ul>
+				</p>
+				<form id="genreForm">
+					<label for="prefGenre">Preferred Genres List: (comma separated)</label><br>
+					<input type="text" id="prefGenre" name="prefGenre">
+					<input type="button" value="Submit" id="genreSubmit" onclick="genreHandler()">
+				</form>
+			</div>
+			<div id="divResult">
+				<p id="pResult"></p>
+			</div>
+		</div>
 
+
+		<script src="./scripts/main.js"></script>
 	</body>
 </html>

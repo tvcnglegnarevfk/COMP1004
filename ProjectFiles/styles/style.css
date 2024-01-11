@@ -1,0 +1,51 @@
+body {
+	background-color: #304050;
+	color: #eeeeee;
+	font-weight: 200px;
+}
+
+#title {
+	font-family: Coolvetica;
+	font-size: 350%;
+	color: #ff33ff;
+	text-align: center;
+}
+
+#content {
+	width: 50%;
+	margin: auto;
+	font-family: Comfortaa;
+	text-align: center;
+}
+
+
+ul {
+	width: 50%;
+	margin: auto;
+	list-style-type: none;
+	columns: 2;
+	column-gap: 0px;
+	-webkit-columns: 2;
+	-moz-columns: 2;
+}
+
+
+
+
+@font-face {
+	font-family: Coolvetica;
+	src: url('fonts/coolvetica/coolvetica-condensed-rg.otf');
+	font-style: normal;
+}
+
+@font-face {
+	font-family: Steelfish;
+	src: url('fonts/steelfish/steelfish-rg.otf');
+	font-style: normal;
+}
+
+@font-face {
+	font-family: Comfortaa;
+	src: url('fonts/comfortaa/Comfortaa-Regular.ttf') format('truetype');
+	font-style: normal;
+}
