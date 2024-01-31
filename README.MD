@@ -1,2 +1,2 @@
 ## COMP1004 Movie Suggestion Generator
-This is my COMP1004 year long project
+This is a single page application to suggest movies based on personal preferences
