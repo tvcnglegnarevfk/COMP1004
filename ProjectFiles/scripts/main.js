@@ -120,8 +120,11 @@ function genreHandler(){
 }
 
 function sqHandler(){
-	fetchStr += "&primary_release_year=";
-	fetchStr += document.getElementById("prefReleaseYear").value;
+
+	if (document.getElementById("boolReleaseYearY").checked){
+		fetchStr += "&primary_release_year=";
+		fetchStr += document.getElementById("prefReleaseYear").value;
+	}
 
 	fetchStr += "&certification_country=GB";
 	var chosenRatingLower = '';
@@ -163,26 +166,31 @@ function getResult(){
 			//console.log("Most popular movie with these genres: " + movieList['results'][0]['title']);
 			var out = "Most popular movie with these genres:<br>";
 			var movie = movieList['results'][0];
-			out += "<br>Title: " + movie['title'];
-			out += "<br>Overview: " + movie['overview'];
-			out += "<br>Release Date: " + movie['release_date'];
 
-			resultGenres = [];
-			for (i=0; i<genreIdDict.length; i++){
-				for (j=0; j<movie['genre_ids'].length; j++){
-					if (genreIdDict[i][0] == movie['genre_ids'][j]){
-						resultGenres.push(genreIdDict[i][1]);
+			if (typeof(movie) == "undefined"){
+				out = "<br><br>ERROR: NO FILM FOUND FOR THESE CHOICES"
+			}
+			else {
+				out += "<br>Title: " + movie['title'];
+				out += "<br>Overview: " + movie['overview'];
+				out += "<br>Release Date: " + movie['release_date'];
+
+				resultGenres = [];
+				for (i=0; i<genreIdDict.length; i++){
+					for (j=0; j<movie['genre_ids'].length; j++){
+						if (genreIdDict[i][0] == movie['genre_ids'][j]){
+							resultGenres.push(genreIdDict[i][1]);
+						}
 					}
 				}
-			}
-			console.log(resultGenres);
-			out += "<br>Genres: " + resultGenres[0];
-			for (i=1; i<resultGenres.length; i++){
-				out += ", " + resultGenres[i];
-			}
+				console.log(resultGenres);
+				out += "<br>Genres: " + resultGenres[0];
+				for (i=1; i<resultGenres.length; i++){
+					out += ", " + resultGenres[i];
+				}
 
-			out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
-
+				out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
+			}
 			document.getElementById("divResult").style.opacity = 1;
 			document.getElementById("divResult").style.position = "relative";
 			document.getElementById("pResult").innerHTML = out;
