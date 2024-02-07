@@ -1,6 +1,17 @@
 //look here to get movie by filters
 //https://developer.themoviedb.org/reference/discover-movie
 //https://api.themoviedb.org/3/movie/{movie_id}/similar
+const year = new Date().getFullYear();
+document.getElementById("prefReleaseYear").value = year;
+document.getElementById("prefReleaseYear").max = year;
+
+document.getElementById("divGenres").style.opacity = 1;
+document.getElementById("divGenres").style.position = "relative";
+document.getElementById("divSQ").style.opacity = 0;
+document.getElementById("divSQ").style.position = "absolute";
+document.getElementById("divResult").style.opacity = 0;
+document.getElementById("divResult").style.position = "absolute";
+
 
 const options = {
 	method: 'GET',
@@ -10,11 +21,50 @@ const options = {
 	}
 };
 
+
+var ageRatings = [];
+function updateAgeRatings(ratingPromise){
+	let ratingArray = ratingPromise["certifications"]["GB"];
+	for (i=0; i<ratingArray.length; i++){
+		ageRatings.push(ratingArray[i]["certification"]);
+	}
+	for (i=0; i<ageRatings.length; i++){
+		var x = document.createElement("input");
+		x.setAttribute("type", "radio");
+		x.setAttribute("value", ageRatings[i]+"L");
+		x.setAttribute("id", ageRatings[i]+"L");
+		x.setAttribute("name", "ageRatingsLower");
+		var y = document.createElement("label");
+		y.innerHTML = ageRatings[i];
+		var z = document.createElement("br")
+		document.getElementById("ratingRadioButtonsLower").appendChild(z);
+		document.getElementById("ratingRadioButtonsLower").appendChild(x);
+		document.getElementById("ratingRadioButtonsLower").appendChild(y);
+	}
+	for (i=0; i<ageRatings.length; i++){
+		var x = document.createElement("input");
+		x.setAttribute("type", "radio");
+		x.setAttribute("value", ageRatings[i]+"H");
+		x.setAttribute("id", ageRatings[i]+"H");
+		x.setAttribute("name", "ageRatingsHigher");
+		var y = document.createElement("label");
+		y.innerHTML = ageRatings[i];
+		var z = document.createElement("br")
+		document.getElementById("ratingRadioButtonsHigher").appendChild(z);
+		document.getElementById("ratingRadioButtonsHigher").appendChild(x);
+		document.getElementById("ratingRadioButtonsHigher").appendChild(y);
+	}
+}
+
+fetch('https://api.themoviedb.org/3/certification/movie/list', options)
+  .then(response => response.json())
+  .then(response => updateAgeRatings(response))
+  .catch(err => console.error(err));
+
 fetch('https://api.themoviedb.org/3/authentication', options)
 	.then(response => response.json())
 	.then(response => console.log(response))
 	.catch(err => console.error(err));
-
 
 fetch('https://api.themoviedb.org/3/genre/movie/list', options)
 	.then(response => response.json())
@@ -37,6 +87,8 @@ function UpdateGenres(genrePromise){
 	}
 }
 
+let fetchStr = '';
+
 function genreHandler(){
 	let genreList = document.getElementById("prefGenre").value.replace(" ","").split(",");
 	document.getElementById("prefGenre").value="";
@@ -57,8 +109,49 @@ function genreHandler(){
 		genreFetchStr += prefGenreIds[i];
 	}
 	genreFetchStr += "&with_original_language=en";
+	fetchStr = genreFetchStr;
 
-	fetch(genreFetchStr, options)
+	document.getElementById("divGenres").style.opacity = 0;
+	document.getElementById("divGenres").style.position = "absolute";
+
+	document.getElementById("divSQ").style.opacity = 1;
+	document.getElementById("divSQ").style.position = "relative";
+
+}
+
+function sqHandler(){
+	fetchStr += "&primary_release_year=";
+	fetchStr += document.getElementById("prefReleaseYear").value;
+
+	fetchStr += "&certification_country=GB";
+	var chosenRatingLower = '';
+	var chosenRatingHigher = ''
+	for (i=0; i<ageRatings.length; i++){
+		if (document.getElementById(ageRatings[i]+"L").checked){
+			chosenRatingLower = ageRatings[i];
+		}
+		if (document.getElementById(ageRatings[i]+"H").checked){
+			chosenRatingHigher = ageRatings[i];
+		}
+	}
+	fetchStr += "&certification.gte=" + chosenRatingLower;
+	fetchStr += "&certification.lte=" + chosenRatingHigher;
+
+	document.getElementById("divSQ").style.opacity = 0;
+	document.getElementById("divSQ").style.position = "absolute";
+	getResult();
+}
+
+/*fetch('https://api.themoviedb.org/3/movie/603/similar?language=en-US&page=1', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+*/
+
+function getResult(){
+	console.log(fetchStr);
+
+	fetch(fetchStr, options)
 	  .then(response => response.json())
 	  .then(response => updateMovieList(response))
 	  .catch(err => console.error(err));
@@ -90,17 +183,18 @@ function genreHandler(){
 
 			out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
 
+			document.getElementById("divResult").style.opacity = 1;
+			document.getElementById("divResult").style.position = "relative";
 			document.getElementById("pResult").innerHTML = out;
 		}
 }
 
-/*fetch('https://api.themoviedb.org/3/movie/603/similar?language=en-US&page=1', options)
-  .then(response => response.json())
-  .then(response => console.log(response))
-  .catch(err => console.error(err));
-*/
-
 document.getElementById("genreForm").addEventListener('submit', (event) => {
    event.preventDefault();
    genreHandler();
+});
+
+document.getElementById("sqForm").addEventListener('submit', (event) => {
+   event.preventDefault();
+   sqHandler();
 });

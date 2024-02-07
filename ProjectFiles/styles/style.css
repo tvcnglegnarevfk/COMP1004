@@ -29,8 +29,17 @@ ul {
 	-moz-columns: 2;
 }
 
+table {
+	width: 70%;
+	margin: auto;
+}
 
-
+.radio{
+	margin: 0 auto;
+  width: auto;
+  text-align: left;
+  display: table;
+}
 
 @font-face {
 	font-family: Coolvetica;
