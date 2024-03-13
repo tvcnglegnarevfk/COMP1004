@@ -17,6 +17,9 @@
 					<input type="text" id="prefGenre" name="prefGenre">
 					<input type="submit" value="Submit" id="genreSubmit">
 				</form>
+				<label for="jsonFile">Or Import Previously Saved Choices:</label><br>
+				<input type="file" id="jsonFile" name="jsonFile">
+				<input type="button" id="jsonImport" name="jsonImport" value="Import" onclick="JsonImport()">
 			</div>
 			<div id="divSQ">
 				<form id="sqForm">
@@ -49,6 +52,8 @@
 			</div>
 			<div id="divResult">
 				<p id="pResult"></p>
+				<input type="button" id="exportJsonBtn" name="exportJsonBtn" value="Export To JSON" onclick="JsonExport()">
+				<input type="button" id="reloadBtn" name="reloadBtn" value="Back To Start" onclick="location.reload()">
 			</div>
 		</div>
 

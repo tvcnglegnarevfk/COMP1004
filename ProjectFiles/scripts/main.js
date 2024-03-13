@@ -88,11 +88,11 @@ function UpdateGenres(genrePromise){
 }
 
 let fetchStr = '';
+let prefGenreIds = [];
 
 function genreHandler(){
 	let genreList = document.getElementById("prefGenre").value.replace(" ","").split(",");
 	document.getElementById("prefGenre").value="";
-	let prefGenreIds = []
 	for (i=0; i<genreIdDict.length; i++){
 		for (j=0; j<genreList.length; j++){
 			if (genreIdDict[i][1].toUpperCase().replace(" ","")==genreList[j].toUpperCase()){
@@ -119,16 +119,16 @@ function genreHandler(){
 
 }
 
-function sqHandler(){
+var chosenRatingLower = '';
+var chosenRatingHigher = '';
 
+function sqHandler(){
 	if (document.getElementById("boolReleaseYearY").checked){
 		fetchStr += "&primary_release_year=";
 		fetchStr += document.getElementById("prefReleaseYear").value;
 	}
 
 	fetchStr += "&certification_country=GB";
-	var chosenRatingLower = '';
-	var chosenRatingHigher = ''
 	for (i=0; i<ageRatings.length; i++){
 		if (document.getElementById(ageRatings[i]+"L").checked){
 			chosenRatingLower = ageRatings[i];
@@ -195,6 +195,36 @@ function getResult(){
 			document.getElementById("divResult").style.position = "relative";
 			document.getElementById("pResult").innerHTML = out;
 		}
+}
+
+function JsonExport(){
+	if (document.getElementById("boolReleaseYearY").checked){
+		var includeReleaseYear = true;
+	}else{
+		var includeReleaseYear = false;
+	}
+	var preferredReleaseYear = document.getElementById("prefReleaseYear").value;
+	var jsonObject = {
+		"PreferredGenreIds": prefGenreIds,
+		"IncludeReleaseYear": includeReleaseYear,
+		"PreferredReleaseYear": preferredReleaseYear,
+		"ChosenRatingLower": chosenRatingLower,
+		"ChosenRatingHigher": chosenRatingHigher
+	}
+	var jsonObjectString = JSON.stringify(jsonObject)
+	var blob = new Blob([jsonObjectString],{
+		type: "octet/stream"
+	});
+	var dlLink = document.createElement("a");
+	dlLink.href = window.URL.createObjectURL(blob);
+	dlLink.setAttribute("download", "userchoices.json");
+	document.body.appendChild(dlLink);
+	dlLink.click();
+	document.body.removeChild(dlLink);
+}
+
+function JsonImport(){
+	// *********************************** LOOK HERE DEAR GOD THIS IS KILLING ME ***************************
 }
 
 document.getElementById("genreForm").addEventListener('submit', (event) => {
