@@ -228,6 +228,7 @@ function JsonExport(){
 	dlLink.click();
 	document.body.removeChild(dlLink);*/
 	localStorage.setItem("JsonObject", JSON.stringify(jsonObject));
+	document.getElementById("exportJsonBtn").value = "Exported";
 }
 
 function JsonImport(){
