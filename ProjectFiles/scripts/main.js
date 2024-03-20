@@ -25,8 +25,9 @@ const options = {
 var ageRatings = [];
 function updateAgeRatings(ratingPromise){
 	let ratingArray = ratingPromise["certifications"]["GB"];
+	tempArr=[4,2,3,6,0,5,1];
 	for (i=0; i<ratingArray.length; i++){
-		ageRatings.push(ratingArray[i]["certification"]);
+		ageRatings.push(ratingArray[tempArr[i]]["certification"]);
 	}
 	for (i=0; i<ageRatings.length; i++){
 		var x = document.createElement("input");
@@ -100,7 +101,6 @@ function genreHandler(){
 			}
 		}
 	}
-	console.log(prefGenreIds);
 
 	genreFetchStr = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=';
 	genreFetchStr += prefGenreIds[0];
@@ -152,6 +152,15 @@ function sqHandler(){
 */
 
 function getResult(){
+
+	document.getElementById("divGenres").style.opacity = 0;
+	document.getElementById("divGenres").style.position = "absolute";
+	document.getElementById("divSQ").style.opacity = 0;
+	document.getElementById("divSQ").style.position = "absolute";
+	document.getElementById("divResult").style.opacity = 1;
+	document.getElementById("divResult").style.position = "relative";
+
+
 	console.log(fetchStr);
 
 	fetch(fetchStr, options)
@@ -164,7 +173,7 @@ function getResult(){
 			console.log(movieList['results'][0]);
 
 			//console.log("Most popular movie with these genres: " + movieList['results'][0]['title']);
-			var out = "Most popular movie with these genres:<br>";
+			var out = "Most popular movie with these choices:<br>";
 			var movie = movieList['results'][0];
 
 			if (typeof(movie) == "undefined"){
@@ -210,8 +219,8 @@ function JsonExport(){
 		"PreferredReleaseYear": preferredReleaseYear,
 		"ChosenRatingLower": chosenRatingLower,
 		"ChosenRatingHigher": chosenRatingHigher
-	}
-	var jsonObjectString = JSON.stringify(jsonObject)
+	};
+/*	var jsonObjectString = JSON.stringify(jsonObject)
 	var blob = new Blob([jsonObjectString],{
 		type: "octet/stream"
 	});
@@ -220,11 +229,29 @@ function JsonExport(){
 	dlLink.setAttribute("download", "userchoices.json");
 	document.body.appendChild(dlLink);
 	dlLink.click();
-	document.body.removeChild(dlLink);
+	document.body.removeChild(dlLink);*/
+	localStorage.setItem("JsonObject", JSON.stringify(jsonObject));
 }
 
 function JsonImport(){
 	// *********************************** LOOK HERE DEAR GOD THIS IS KILLING ME ***************************
+	var jsonObject = JSON.parse(localStorage.getItem("JsonObject"));
+	console.log("JsonObject");
+	console.log(jsonObject);
+	fetchStr = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=";
+	fetchStr += jsonObject["PreferredGenreIds"][0]
+	for (i=1; i<jsonObject["PreferredGenreIds"].length; i++){
+		fetchStr += '%2C';
+		fetchStr += jsonObject["PreferredGenreIds"][i];
+	}
+	if (jsonObject["IncludeReleaseYear"]){
+		fetchStr += "&primary_release_year=";
+		fetchStr += jsonObject["PreferredReleaseYear"];
+	}
+	fetchStr += "&certification_country=GB";
+	fetchStr += "&certification.gte=" + jsonObject["ChosenRatingLower"];
+	fetchStr += "&certification.lte=" + jsonObject["ChosenRatingHigher"];
+	getResult();
 }
 
 document.getElementById("genreForm").addEventListener('submit', (event) => {
