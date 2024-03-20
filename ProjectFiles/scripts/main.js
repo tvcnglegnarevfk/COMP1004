@@ -1,6 +1,5 @@
 //look here to get movie by filters
 //https://developer.themoviedb.org/reference/discover-movie
-//https://api.themoviedb.org/3/movie/{movie_id}/similar
 const year = new Date().getFullYear();
 document.getElementById("prefReleaseYear").value = year;
 document.getElementById("prefReleaseYear").max = year;
@@ -151,6 +150,8 @@ function sqHandler(){
   .catch(err => console.error(err));
 */
 
+var resultId;
+
 function getResult(){
 	console.log(fetchStr);
 
@@ -169,6 +170,9 @@ function getResult(){
 
 			if (typeof(movie) == "undefined"){
 				out = "<br><br>ERROR: NO FILM FOUND FOR THESE CHOICES"
+				var exportButton = document.getElementById("exportJsonBtn");
+				exportButton.parentNode.removeChild(exportButton);
+				document.getElementById("similarBtn").style.opacity=0;
 			}
 			else {
 				out += "<br>Title: " + movie['title'];
@@ -191,6 +195,7 @@ function getResult(){
 
 				out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
 				out += "<br><br><a href=\"https://themoviedb.org/movie/" + movie["id"] + "\"> TMDB LINK</a><br>"
+				resultId = movie["id"];
 			}
 
 			document.getElementById("divGenres").style.opacity = 0;
@@ -250,6 +255,67 @@ function JsonImport(){
 	fetchStr += "&certification.gte=" + jsonObject["ChosenRatingLower"];
 	fetchStr += "&certification.lte=" + jsonObject["ChosenRatingHigher"];
 	getResult();
+}
+
+function FindSimilar(){
+	var exportButton = document.getElementById("exportJsonBtn");
+	if (exportButton){
+		exportButton.parentNode.removeChild(exportButton);
+	}
+	var brBtn = document.getElementById("brBtn");
+	if (brBtn){
+		brBtn.parentNode.removeChild(brBtn);
+	}
+	console.log(resultId);
+	fetchStr = "https://api.themoviedb.org/3/movie/" + resultId + "/similar?language=en-US&page=1'"
+
+	fetch(fetchStr, options)
+		.then(response => response.json())
+		.then(response => updateMovieList(response))
+		.catch(err => console.error(err));
+
+	function updateMovieList(moviePromise){
+		const movieList = moviePromise;
+		console.log(movieList['results'][0]);
+
+		var out = "Similar Movie:<br>";
+		var movie = movieList['results'][0];
+
+		if (typeof(movie) == "undefined"){
+			out = "<br><br>ERROR: NO FILM FOUND FOR THESE CHOICES"
+		}
+		else {
+			out += "<br>Title: " + movie['title'];
+			out += "<br>Overview: " + movie['overview'];
+			out += "<br>Release Date: " + movie['release_date'];
+
+			resultGenres = [];
+			for (i=0; i<genreIdDict.length; i++){
+				for (j=0; j<movie['genre_ids'].length; j++){
+					if (genreIdDict[i][0] == movie['genre_ids'][j]){
+						resultGenres.push(genreIdDict[i][1]);
+					}
+				}
+			}
+			console.log(resultGenres);
+			out += "<br>Genres: " + resultGenres[0];
+			for (i=1; i<resultGenres.length; i++){
+				out += ", " + resultGenres[i];
+			}
+
+			out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
+			out += "<br><br><a href=\"https://themoviedb.org/movie/" + movie["id"] + "\"> TMDB LINK</a><br>"
+			resultId = movie["id"];
+		}
+
+		document.getElementById("divGenres").style.opacity = 0;
+		document.getElementById("divGenres").style.position = "absolute";
+		document.getElementById("divSQ").style.opacity = 0;
+		document.getElementById("divSQ").style.position = "absolute";
+		document.getElementById("divResult").style.opacity = 1;
+		document.getElementById("divResult").style.position = "relative";
+		document.getElementById("pResult").innerHTML = out;
+	}
 }
 
 document.getElementById("genreForm").addEventListener('submit', (event) => {
