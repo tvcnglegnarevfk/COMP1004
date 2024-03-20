@@ -152,15 +152,6 @@ function sqHandler(){
 */
 
 function getResult(){
-
-	document.getElementById("divGenres").style.opacity = 0;
-	document.getElementById("divGenres").style.position = "absolute";
-	document.getElementById("divSQ").style.opacity = 0;
-	document.getElementById("divSQ").style.position = "absolute";
-	document.getElementById("divResult").style.opacity = 1;
-	document.getElementById("divResult").style.position = "relative";
-
-
 	console.log(fetchStr);
 
 	fetch(fetchStr, options)
@@ -199,7 +190,13 @@ function getResult(){
 				}
 
 				out += "<br>Average Rating:\t" + movie['vote_average'] + "/10 from " + movie['vote_count'] + " users."
+				out += "<br><br><a href=\"https://themoviedb.org/movie/" + movie["id"] + "\"> TMDB LINK</a><br>"
 			}
+
+			document.getElementById("divGenres").style.opacity = 0;
+			document.getElementById("divGenres").style.position = "absolute";
+			document.getElementById("divSQ").style.opacity = 0;
+			document.getElementById("divSQ").style.position = "absolute";
 			document.getElementById("divResult").style.opacity = 1;
 			document.getElementById("divResult").style.position = "relative";
 			document.getElementById("pResult").innerHTML = out;

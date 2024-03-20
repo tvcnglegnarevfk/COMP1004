@@ -18,6 +18,21 @@ body {
 	text-align: center;
 }
 
+a:link{
+	color: #ffff00;
+}
+
+a:visited{
+	color: #ffff00;
+}
+
+a:hover{
+	color: #ffffff;
+}
+
+a:active{
+	color: #ffff00;
+}
 
 ul {
 	width: 50%;
