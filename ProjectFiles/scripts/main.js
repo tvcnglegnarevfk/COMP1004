@@ -237,7 +237,6 @@ function JsonExport(){
 }
 
 function JsonImport(){
-	// *********************************** LOOK HERE DEAR GOD THIS IS KILLING ME ***************************
 	var jsonObject = JSON.parse(localStorage.getItem("JsonObject"));
 	console.log("JsonObject");
 	console.log(jsonObject);
